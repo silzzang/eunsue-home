@@ -1,0 +1,149 @@
+:root {
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  color: #172033;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #fff3dc 0%, #ffe2c2 35%, #ffd2a8 100%);
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 16px;
+}
+
+.main-card {
+  width: min(980px, 100%);
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 28px;
+  box-shadow: 0 18px 45px rgba(172, 86, 15, 0.18);
+  padding: 28px;
+}
+
+.hero h1 {
+  margin: 8px 0;
+  font-size: clamp(1.5rem, 2.5vw, 2.1rem);
+}
+
+.badge {
+  display: inline-block;
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff1da;
+  color: #c8701d;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.subtitle {
+  margin: 0;
+  color: #5e6372;
+}
+
+.stats-grid {
+  margin-top: 20px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.stat {
+  border-radius: 18px;
+  padding: 18px;
+  color: #fff;
+}
+
+.stat h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.value {
+  margin: 10px 0 4px;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.stat small {
+  opacity: 0.94;
+}
+
+.orange {
+  background: linear-gradient(145deg, #fca348, #f1772f);
+}
+
+.blue {
+  background: linear-gradient(145deg, #4db6ff, #2e78e8);
+}
+
+.purple {
+  background: linear-gradient(145deg, #b089ff, #8167f3);
+}
+
+.feed-section {
+  margin-top: 22px;
+  background: #ffffffd9;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.section-head h2 {
+  margin: 0;
+}
+
+.section-head p {
+  margin: 6px 0 0;
+  color: #616b80;
+}
+
+.feed-list {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.feed-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e5e8f2;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.feed-item input {
+  width: 18px;
+  height: 18px;
+}
+
+.feed-item span {
+  display: grid;
+  gap: 2px;
+}
+
+.feed-item em {
+  font-style: normal;
+  color: #687188;
+  font-size: 0.9rem;
+}
+
+.feed-item.done {
+  border-color: #ffb876;
+  background: #fff6ed;
+}
