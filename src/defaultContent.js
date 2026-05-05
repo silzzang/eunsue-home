@@ -1,1 +1,2 @@
-export { buildDefaultBundle, LOCALE_ORDER, LOCALE_LABELS } from "./i18n/defaultBundleData.js";
+export { buildDefaultBundle, LOCALE_LABELS, LOCALE_ORDER } from "./i18n/defaultBundleData.js";
+export { loadContentBundle } from "./contentStorage.js";

@@ -10,7 +10,7 @@
   --shadow-sm: 4px 4px 0 var(--nl-black);
   --shadow-lg: 8px 8px 0 var(--nl-black);
   --shadow-btn: 2px 2px 0 var(--nl-black);
-  font-family: Inter, "Pretendard", "Noto Sans KR", system-ui, sans-serif;
+  font-family: Inter, "Noto Sans KR", "Noto Sans SC", "Noto Sans Devanagari", "Pretendard", system-ui, sans-serif;
   color: var(--nl-ink);
   -webkit-font-smoothing: antialiased;
 }
@@ -46,10 +46,64 @@ body {
 .nl-header-inner {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1.25rem;
+}
+
+.nl-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.65rem;
+  flex: 1;
+  min-width: min(100%, 16rem);
+}
+
+@media (min-width: 768px) {
+  .nl-header-inner {
+    align-items: center;
+  }
+
+  .nl-header-right {
+    flex: 0 1 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+  }
+}
+
+/* 언어 전환 */
+.lang-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: flex-end;
+}
+
+.lang-switcher-btn {
+  padding: 0.32rem 0.55rem;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1.2;
+  border: 2px solid var(--nl-black);
+  background: #fff;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    background 0.12s ease;
+}
+
+.lang-switcher-btn:hover {
+  background: var(--nl-yellow);
+}
+
+.lang-switcher-btn--active {
+  background: var(--nl-cyan);
+  box-shadow: var(--shadow-btn);
 }
 
 .nl-brand {
@@ -489,6 +543,52 @@ body {
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
+}
+
+.admin-email-bar {
+  margin-bottom: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: #fff;
+  border: 2px solid var(--nl-black);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-label-inline-row {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.admin-label-inline-row span {
+  font-weight: 800;
+}
+
+.admin-lang-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.admin-lang-tab {
+  padding: 0.4rem 0.75rem;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  border: 2px solid var(--nl-black);
+  background: #fff;
+  box-shadow: var(--shadow-btn);
+}
+
+.admin-lang-tab:hover {
+  background: var(--nl-pink);
+}
+
+.admin-lang-tab--active {
+  background: var(--nl-cyan);
 }
 
 .admin-toast {
