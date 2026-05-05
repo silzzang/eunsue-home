@@ -392,3 +392,234 @@ body {
     background: #d6f9fc;
   }
 }
+
+/* —— 관리자 페이지 —— */
+.nl-admin-link {
+  margin: 1.5rem 0 0;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.nl-admin-link a {
+  color: var(--nl-muted);
+  font-weight: 700;
+}
+
+.nl-admin-link a:hover {
+  color: var(--nl-ink);
+}
+
+.admin-page .admin-shell {
+  max-width: 56rem;
+}
+
+.admin-card {
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: 1.75rem;
+  background: #fff;
+  border: 2px solid var(--nl-black);
+  box-shadow: var(--shadow-lg);
+}
+
+.admin-h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.admin-hint {
+  margin: 0 0 1.25rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--nl-muted);
+}
+
+.admin-hint code {
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: 0.78rem;
+  background: var(--nl-paper);
+  padding: 0.1rem 0.35rem;
+  border: 1px solid #ddd;
+}
+
+.admin-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.admin-error {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #b91c1c;
+}
+
+.admin-back {
+  margin: 1.25rem 0 0;
+  font-size: 0.9rem;
+}
+
+.admin-back a {
+  font-weight: 800;
+  color: var(--nl-ink);
+}
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.15rem;
+  background: var(--nl-yellow);
+  border: 2px solid var(--nl-black);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-toolbar-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.admin-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.admin-toast {
+  margin: 0 0 1rem;
+  padding: 0.65rem 1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: var(--nl-cyan);
+  border: 2px solid var(--nl-black);
+  box-shadow: var(--shadow-btn);
+}
+
+.admin-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 900px) {
+  .admin-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-section-wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.admin-section {
+  padding: 1.15rem 1.25rem;
+  background: #fff;
+  border: 2px solid var(--nl-black);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-section-title {
+  margin: 0 0 1rem;
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.admin-label {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.admin-label-inline {
+  margin-bottom: 0.65rem;
+}
+
+.admin-input,
+.admin-textarea {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  font: inherit;
+  font-weight: 600;
+  border: 2px solid var(--nl-black);
+  border-radius: 0;
+  background: var(--nl-paper);
+}
+
+.admin-input:focus,
+.admin-textarea:focus {
+  outline: 2px solid var(--nl-cyan);
+  outline-offset: 0;
+}
+
+.admin-textarea {
+  resize: vertical;
+  min-height: 3.5rem;
+}
+
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  border: 2px solid var(--nl-black);
+  background: #fff;
+  box-shadow: var(--shadow-btn);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    transform 0.12s ease,
+    background 0.12s ease;
+}
+
+.admin-btn:hover {
+  background: var(--nl-pink);
+}
+
+.admin-btn-primary {
+  background: var(--nl-cyan);
+}
+
+.admin-btn-primary:hover {
+  background: var(--nl-cyan);
+  filter: brightness(0.97);
+}
+
+.admin-btn-ghost:hover {
+  background: #fff;
+}
+
+.admin-btn-warn:hover {
+  background: #fecaca;
+}
+
+.admin-btn-mini {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.admin-news-list {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.admin-news-row {
+  padding: 0.85rem;
+  border: 2px dashed #9ca3af;
+  background: #fafafa;
+}
