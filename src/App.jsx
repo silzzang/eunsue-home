@@ -98,7 +98,7 @@ function App() {
             <h2 className="nl-card-label">학생 면담 · 연락</h2>
             <p className="nl-card-strong">금요일 14:00–16:00 (사전 예약)</p>
             <p className="nl-card-note">
-              you.eunsue@university.ac.kr
+              eunsueyou@gmail.com
               <br />
               연구실: 공학관 〇〇호
             </p>
@@ -128,7 +128,7 @@ function App() {
         <section className="nl-cta" aria-label="문의 안내">
           <p className="nl-cta-title">강의·연구 협업이 필요하신가요?</p>
           <p className="nl-cta-desc">메일로 간단한 제목과 일정을 남겨 주시면 회신 드리겠습니다.</p>
-          <a className="nl-cta-btn" href="mailto:you.eunsue@university.ac.kr">
+          <a className="nl-cta-btn" href="mailto:eunsueyou@gmail.com">
             협업 · 문의하기
           </a>
         </section>
