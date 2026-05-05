@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { defaultContent } from "./defaultContent.js";
-import { clearStoredContent, persistContent } from "./contentStorage.js";
+import { buildDefaultBundle, LOCALE_LABELS, LOCALE_ORDER } from "./i18n/defaultBundleData.js";
+import { clearStoredContent, persistContentBundle } from "./contentStorage.js";
 
 const AUTH_KEY = "prof-admin-auth";
 
@@ -21,23 +21,31 @@ function itemsToLines(items) {
   return Array.isArray(items) ? items.join("\n") : "";
 }
 
-export default function AdminPage({ content, onSaved }) {
+export default function AdminPage({ bundle, onSaved }) {
   const [authed, setAuthed] = useState(() => sessionStorage.getItem(AUTH_KEY) === "1");
   const [passInput, setPassInput] = useState("");
   const [passErr, setPassErr] = useState("");
-
-  const [draft, setDraft] = useState(() => structuredClone(content));
-  const [researchText, setResearchText] = useState(() => itemsToLines(content.researchItems));
-  const [coursesText, setCoursesText] = useState(() => itemsToLines(content.courseItems));
+  const [activeLocale, setActiveLocale] = useState("ko");
+  const [localBundle, setLocalBundle] = useState(() => structuredClone(bundle));
+  const [emailDraft, setEmailDraft] = useState(bundle.email);
+  const [draft, setDraft] = useState(() => structuredClone(bundle.locales.ko));
+  const [researchText, setResearchText] = useState(() => itemsToLines(bundle.locales.ko.researchItems));
+  const [coursesText, setCoursesText] = useState(() => itemsToLines(bundle.locales.ko.courseItems));
   const [msg, setMsg] = useState("");
 
   const expected = useMemo(() => getExpectedPassword(), []);
 
   useEffect(() => {
-    setDraft(structuredClone(content));
-    setResearchText(itemsToLines(content.researchItems));
-    setCoursesText(itemsToLines(content.courseItems));
-  }, [content]);
+    setLocalBundle(structuredClone(bundle));
+    setEmailDraft(bundle.email);
+  }, [bundle]);
+
+  useEffect(() => {
+    const seg = localBundle.locales[activeLocale];
+    setDraft(structuredClone(seg));
+    setResearchText(itemsToLines(seg.researchItems));
+    setCoursesText(itemsToLines(seg.courseItems));
+  }, [activeLocale, localBundle]);
 
   const login = (e) => {
     e.preventDefault();
@@ -82,14 +90,37 @@ export default function AdminPage({ content, onSaved }) {
     }));
   };
 
+  const flushSegment = () => ({
+    ...draft,
+    researchItems: linesToItems(researchText),
+    courseItems: linesToItems(coursesText),
+  });
+
+  const goLocale = (next) => {
+    if (next === activeLocale) return;
+    setLocalBundle((prev) => ({
+      ...prev,
+      locales: {
+        ...prev.locales,
+        [activeLocale]: flushSegment(),
+      },
+    }));
+    setActiveLocale(next);
+  };
+
   const save = () => {
+    const seg = flushSegment();
     const next = {
-      ...draft,
-      researchItems: linesToItems(researchText),
-      courseItems: linesToItems(coursesText),
+      version: 2,
+      email: emailDraft.trim() || localBundle.email,
+      locales: {
+        ...localBundle.locales,
+        [activeLocale]: seg,
+      },
     };
-    persistContent(next);
+    persistContentBundle(next);
     onSaved(next);
+    setLocalBundle(structuredClone(next));
     setMsg("저장되었습니다. 메인 페이지로 이동해 확인하세요.");
     setTimeout(() => setMsg(""), 4000);
   };
@@ -97,11 +128,11 @@ export default function AdminPage({ content, onSaved }) {
   const resetAll = () => {
     if (!window.confirm("저장된 내용을 지우고 기본값으로 되돌릴까요?")) return;
     clearStoredContent();
-    const fresh = structuredClone(defaultContent);
+    const fresh = structuredClone(buildDefaultBundle());
     onSaved(fresh);
-    setDraft(fresh);
-    setResearchText(itemsToLines(fresh.researchItems));
-    setCoursesText(itemsToLines(fresh.courseItems));
+    setLocalBundle(fresh);
+    setEmailDraft(fresh.email);
+    setActiveLocale("ko");
     setMsg("기본값으로 초기화했습니다.");
     setTimeout(() => setMsg(""), 4000);
   };
@@ -161,18 +192,62 @@ export default function AdminPage({ content, onSaved }) {
             </button>
           </div>
         </header>
+
+        <div className="admin-email-bar">
+          <label className="admin-label admin-label-inline-row">
+            <span>공통 이메일 (모든 언어의 문의 주소)</span>
+            <input
+              className="admin-input"
+              type="email"
+              value={emailDraft}
+              onChange={(e) => setEmailDraft(e.target.value)}
+            />
+          </label>
+        </div>
+
+        <div className="admin-lang-tabs" role="tablist" aria-label="편집 언어">
+          {LOCALE_ORDER.map((lc) => (
+            <button
+              key={lc}
+              type="button"
+              role="tab"
+              aria-selected={activeLocale === lc}
+              className={`admin-lang-tab${activeLocale === lc ? " admin-lang-tab--active" : ""}`}
+              onClick={() => goLocale(lc)}
+            >
+              {LOCALE_LABELS[lc]}
+            </button>
+          ))}
+        </div>
+
         {msg ? <p className="admin-toast">{msg}</p> : null}
 
         <div className="admin-grid">
           <section className="admin-section">
-            <h2 className="admin-section-title">헤더 · 히어로</h2>
+            <h2 className="admin-section-title">헤더 · 히어로 · 내비</h2>
             <label className="admin-label">
               브랜드 제목
               <input className="admin-input" value={draft.brandTitle} onChange={(e) => patch({ brandTitle: e.target.value })} />
             </label>
             <label className="admin-label">
-              브랜드 부제 (영문 등)
+              브랜드 부제
               <input className="admin-input" value={draft.brandTag} onChange={(e) => patch({ brandTag: e.target.value })} />
+            </label>
+            <label className="admin-label">
+              내비—Home 라벨
+              <input className="admin-input" value={draft.navHome} onChange={(e) => patch({ navHome: e.target.value })} />
+            </label>
+            <label className="admin-label">
+              내비—Research
+              <input className="admin-input" value={draft.navResearch} onChange={(e) => patch({ navResearch: e.target.value })} />
+            </label>
+            <label className="admin-label">
+              내비—Courses
+              <input className="admin-input" value={draft.navCourses} onChange={(e) => patch({ navCourses: e.target.value })} />
+            </label>
+            <label className="admin-label">
+              내비—Updates
+              <input className="admin-input" value={draft.navUpdates} onChange={(e) => patch({ navUpdates: e.target.value })} />
             </label>
             <label className="admin-label">
               히어로 뱃지 문구
@@ -185,6 +260,26 @@ export default function AdminPage({ content, onSaved }) {
             <label className="admin-label">
               히어로 본문
               <textarea className="admin-textarea" rows={3} value={draft.heroLead} onChange={(e) => patch({ heroLead: e.target.value })} />
+            </label>
+            <label className="admin-label">
+              하이라이트 영역 aria 라벨
+              <input
+                className="admin-input"
+                value={draft.highlightsAriaLabel}
+                onChange={(e) => patch({ highlightsAriaLabel: e.target.value })}
+              />
+            </label>
+            <label className="admin-label">
+              문의 CTA 영역 aria 라벨
+              <input
+                className="admin-input"
+                value={draft.inquiryAriaLabel}
+                onChange={(e) => patch({ inquiryAriaLabel: e.target.value })}
+              />
+            </label>
+            <label className="admin-label">
+              관리자 링크 글자
+              <input className="admin-input" value={draft.adminLinkLabel} onChange={(e) => patch({ adminLinkLabel: e.target.value })} />
             </label>
           </section>
 
@@ -217,7 +312,7 @@ export default function AdminPage({ content, onSaved }) {
           </section>
 
           <section className="admin-section">
-            <h2 className="admin-section-title">연락 · CTA</h2>
+            <h2 className="admin-section-title">연락 · CTA · Gmail 제목</h2>
             <label className="admin-label">
               연락 카드 제목
               <input className="admin-input" value={draft.contactLabel} onChange={(e) => patch({ contactLabel: e.target.value })} />
@@ -225,10 +320,6 @@ export default function AdminPage({ content, onSaved }) {
             <label className="admin-label">
               면담 시간 안내
               <input className="admin-input" value={draft.contactHours} onChange={(e) => patch({ contactHours: e.target.value })} />
-            </label>
-            <label className="admin-label">
-              이메일 (표시 + 협업 링크)
-              <input className="admin-input" type="email" value={draft.email} onChange={(e) => patch({ email: e.target.value })} />
             </label>
             <label className="admin-label">
               연구실 등 (한 줄)
@@ -245,6 +336,14 @@ export default function AdminPage({ content, onSaved }) {
             <label className="admin-label">
               CTA 버튼 글자
               <input className="admin-input" value={draft.ctaButton} onChange={(e) => patch({ ctaButton: e.target.value })} />
+            </label>
+            <label className="admin-label">
+              Gmail 작성창 기본 제목 (협업 문의)
+              <input
+                className="admin-input"
+                value={draft.collaborationSubject}
+                onChange={(e) => patch({ collaborationSubject: e.target.value })}
+              />
             </label>
           </section>
 

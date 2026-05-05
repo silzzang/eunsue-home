@@ -1,7 +1,45 @@
 import { IconBook } from "./IconBook.jsx";
 
-export default function HomePage({ content }) {
-  const mailto = `mailto:${encodeURIComponent(content.email)}`;
+/** Gmail 웹 메일 작성창 URL (브라우저에서 Gmail 로그인 필요) */
+function gmailComposeHref(email, subject) {
+  const q = new URLSearchParams({
+    view: "cm",
+    fs: "1",
+    to: email.trim(),
+    su: subject,
+  });
+  return `https://mail.google.com/mail/u/0/?${q.toString()}`;
+}
+
+function LanguageSwitcher({ locale, locales, onLocaleChange }) {
+  return (
+    <div className="lang-switcher" role="group" aria-label="언어 선택">
+      {locales.map(({ code, label }) => (
+        <button
+          key={code}
+          type="button"
+          className={`lang-switcher-btn${locale === code ? " lang-switcher-btn--active" : ""}`}
+          onClick={() => onLocaleChange(code)}
+          aria-pressed={locale === code}
+          lang={
+            code === "zh"
+              ? "zh-Hans"
+              : code === "ne"
+                ? "ne"
+                : code === "vi"
+                  ? "vi"
+                  : code
+          }
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export default function HomePage({ content, locale, locales, onLocaleChange }) {
+  const collaborationHref = gmailComposeHref(content.email, content.collaborationSubject ?? "Collaboration");
 
   return (
     <div className="page">
@@ -17,18 +55,21 @@ export default function HomePage({ content }) {
                 <p className="nl-brand-tag">{content.brandTag}</p>
               </div>
             </div>
-            <nav className="nl-nav" aria-label="주요 메뉴">
-              <span className="nl-nav-pill nl-nav-pill--active">Home</span>
-              <a className="nl-nav-pill" href="#research">
-                Research
-              </a>
-              <a className="nl-nav-pill" href="#courses">
-                Courses
-              </a>
-              <a className="nl-nav-pill" href="#updates">
-                Updates
-              </a>
-            </nav>
+            <div className="nl-header-right">
+              <LanguageSwitcher locale={locale} locales={locales} onLocaleChange={onLocaleChange} />
+              <nav className="nl-nav" aria-label="주요 메뉴">
+                <span className="nl-nav-pill nl-nav-pill--active">{content.navHome}</span>
+                <a className="nl-nav-pill" href="#research">
+                  {content.navResearch}
+                </a>
+                <a className="nl-nav-pill" href="#courses">
+                  {content.navCourses}
+                </a>
+                <a className="nl-nav-pill" href="#updates">
+                  {content.navUpdates}
+                </a>
+              </nav>
+            </div>
           </div>
         </header>
 
@@ -45,12 +86,12 @@ export default function HomePage({ content }) {
           <p className="nl-hero-lead">{content.heroLead}</p>
         </section>
 
-        <section className="nl-cards" aria-label="하이라이트">
+        <section className="nl-cards" aria-label={content.highlightsAriaLabel}>
           <article id="research" className="nl-card nl-card--yellow">
             <h2 className="nl-card-label">{content.researchLabel}</h2>
             <ul className="nl-bullets">
               {content.researchItems.map((item, i) => (
-                <li key={`${item}-${i}`}>{item}</li>
+                <li key={`${locale}-${item}-${i}`}>{item}</li>
               ))}
             </ul>
             <p className="nl-card-note">{content.researchNote}</p>
@@ -59,7 +100,7 @@ export default function HomePage({ content }) {
             <h2 className="nl-card-label">{content.coursesLabel}</h2>
             <ul className="nl-bullets">
               {content.courseItems.map((c, i) => (
-                <li key={`${c}-${i}`}>{c}</li>
+                <li key={`${locale}-${c}-${i}`}>{c}</li>
               ))}
             </ul>
             <p className="nl-card-note">{content.coursesNote}</p>
@@ -95,16 +136,21 @@ export default function HomePage({ content }) {
           </ul>
         </section>
 
-        <section className="nl-cta" aria-label="문의 안내">
+        <section className="nl-cta" aria-label={content.inquiryAriaLabel}>
           <p className="nl-cta-title">{content.ctaTitle}</p>
           <p className="nl-cta-desc">{content.ctaDesc}</p>
-          <a className="nl-cta-btn" href={mailto}>
+          <a
+            className="nl-cta-btn"
+            href={collaborationHref}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {content.ctaButton}
           </a>
         </section>
 
         <p className="nl-admin-link">
-          <a href="#/admin">관리자</a>
+          <a href="#/admin">{content.adminLinkLabel}</a>
         </p>
       </div>
     </div>

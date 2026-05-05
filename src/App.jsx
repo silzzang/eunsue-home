@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import AdminPage from "./AdminPage.jsx";
 import HomePage from "./HomePage.jsx";
-import { defaultContent } from "./defaultContent.js";
-import { loadContent } from "./contentStorage.js";
+import { LOCALE_LABELS, LOCALE_ORDER } from "./i18n/defaultBundleData.js";
+import { getPageContent } from "./i18n/siteBundle.js";
+import { loadContentBundle } from "./contentStorage.js";
 import "./App.css";
+
+const LANG_KEY = "prof-home-locale";
 
 function routeFromHash() {
   const raw = window.location.hash.replace(/^#/, "").replace(/^\//, "");
@@ -12,7 +15,17 @@ function routeFromHash() {
 
 export default function App() {
   const [route, setRoute] = useState(routeFromHash);
-  const [content, setContent] = useState(() => loadContent(defaultContent));
+  const [bundle, setBundle] = useState(() => loadContentBundle());
+  const [locale, setLocale] = useState(() => {
+    const saved = localStorage.getItem(LANG_KEY);
+    return LOCALE_ORDER.includes(saved) ? saved : "ko";
+  });
+
+  useEffect(() => {
+    localStorage.setItem(LANG_KEY, locale);
+    const langMap = { ko: "ko", en: "en", zh: "zh-Hans", vi: "vi", ne: "ne" };
+    document.documentElement.lang = langMap[locale] ?? "ko";
+  }, [locale]);
 
   useEffect(() => {
     const onHash = () => setRoute(routeFromHash());
@@ -20,13 +33,22 @@ export default function App() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
-  const onSaved = useCallback((next) => {
-    setContent(next);
+  const onSavedBundle = useCallback((next) => {
+    setBundle(next);
   }, []);
 
+  const pageContent = getPageContent(bundle, locale);
+
   if (route === "admin") {
-    return <AdminPage content={content} onSaved={onSaved} />;
+    return <AdminPage bundle={bundle} onSaved={onSavedBundle} />;
   }
 
-  return <HomePage content={content} />;
+  return (
+    <HomePage
+      content={pageContent}
+      locale={locale}
+      locales={LOCALE_ORDER.map((lc) => ({ code: lc, label: LOCALE_LABELS[lc] }))}
+      onLocaleChange={setLocale}
+    />
+  );
 }
