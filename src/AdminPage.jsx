@@ -83,12 +83,10 @@ export default function AdminPage({ content, onSaved }) {
   };
 
   const save = () => {
-    const researchItems = linesToItems(researchText);
-    const courseItems = linesToItems(coursesText);
     const next = {
       ...draft,
-      researchItems: researchItems.length ? researchItems : structuredClone(defaultContent.researchItems),
-      courseItems: courseItems.length ? courseItems : structuredClone(defaultContent.courseItems),
+      researchItems: linesToItems(researchText),
+      courseItems: linesToItems(coursesText),
     };
     persistContent(next);
     onSaved(next);
