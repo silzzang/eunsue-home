@@ -12,7 +12,7 @@ const AUTH_KEY = "prof-admin-auth";
 function getExpectedPassword() {
   const v = import.meta.env.VITE_ADMIN_PASSWORD;
   if (v !== undefined && v !== "") return v;
-  return "changeme";
+  return "changeme22";
 }
 
 function linesToItems(text) {
@@ -150,7 +150,7 @@ export default function AdminPage({ bundle, onSaved }) {
             <h1 className="admin-h1">관리자 로그인</h1>
             <p className="admin-hint">
               비밀번호는 환경 변수 <code>VITE_ADMIN_PASSWORD</code>로 설정할 수 있습니다. 미설정 시 기본값{" "}
-              <code>changeme</code> 입니다.
+              <code>********</code> 입니다.
             </p>
             <form onSubmit={login} className="admin-form">
               <label className="admin-label">
