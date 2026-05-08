@@ -6,6 +6,7 @@ import {
   LOCALE_ORDER,
 } from "./i18n/defaultBundleData.js";
 import { clearStoredContent, persistContentBundle } from "./contentStorage.js";
+import { TARGET_LABELS, TARGET_LOCALES, translateKoToAll } from "./i18n/translateAgent.js";
 
 const AUTH_KEY = "prof-admin-auth";
 
@@ -37,6 +38,7 @@ export default function AdminPage({ bundle, onSaved }) {
   const [researchText, setResearchText] = useState(() => itemsToLines(bundle.locales.ko.researchItems));
   const [coursesText, setCoursesText] = useState(() => itemsToLines(bundle.locales.ko.courseItems));
   const [msg, setMsg] = useState("");
+  const [translating, setTranslating] = useState(false);
 
   const expected = useMemo(() => getExpectedPassword(), []);
 
@@ -130,6 +132,71 @@ export default function AdminPage({ bundle, onSaved }) {
     setTimeout(() => setMsg(""), 4000);
   };
 
+  const showMessage = (text, timeout = 4000) => {
+    setMsg(text);
+    if (timeout > 0) {
+      setTimeout(() => setMsg((current) => (current === text ? "" : current)), timeout);
+    }
+  };
+
+  const applyMultilingual = async () => {
+    if (translating) return;
+    if (
+      !window.confirm(
+        "한국어 페이지 내용을 기준으로 영어·중국어·베트남어·네팔어를 자동 반영합니다. 진행할까요?"
+      )
+    ) {
+      return;
+    }
+
+    const koSegment =
+      activeLocale === "ko" ? flushSegment() : structuredClone(localBundle.locales.ko);
+
+    setTranslating(true);
+    showMessage("다국어 번역 에이전트를 실행합니다...", 0);
+
+    try {
+      const translated = await translateKoToAll(koSegment, {
+        onProgress: ({ locale, done, total, localeIndex, localeCount }) => {
+          const label = TARGET_LABELS[locale] || locale;
+          showMessage(`[${localeIndex + 1}/${localeCount}] ${label} 반영 중... ${done}/${total}`, 0);
+        },
+      });
+
+      const nextLocales = {
+        ...localBundle.locales,
+        ko: koSegment,
+      };
+      for (const locale of TARGET_LOCALES) {
+        nextLocales[locale] = translated[locale];
+      }
+
+      const next = {
+        version: BUNDLE_VERSION,
+        email: emailDraft.trim() || localBundle.email,
+        locales: nextLocales,
+      };
+
+      persistContentBundle(next);
+      onSaved(next);
+      setLocalBundle(structuredClone(next));
+
+      if (activeLocale !== "ko" && next.locales[activeLocale]) {
+        const activeSegment = next.locales[activeLocale];
+        setDraft(structuredClone(activeSegment));
+        setResearchText(itemsToLines(activeSegment.researchItems));
+        setCoursesText(itemsToLines(activeSegment.courseItems));
+      }
+
+      showMessage("다국어 적용이 완료되어 저장되었습니다. 메인 페이지에서 확인하세요.");
+    } catch (err) {
+      console.error(err);
+      showMessage(`다국어 적용 실패: ${err?.message || err}`);
+    } finally {
+      setTranslating(false);
+    }
+  };
+
   const resetAll = () => {
     if (!window.confirm("저장된 내용을 지우고 기본값으로 되돌릴까요?")) return;
     clearStoredContent();
@@ -189,11 +256,20 @@ export default function AdminPage({ bundle, onSaved }) {
             <a className="admin-btn admin-btn-ghost" href="#/">
               메인 보기
             </a>
-            <button type="button" className="admin-btn admin-btn-warn" onClick={resetAll}>
+            <button type="button" className="admin-btn admin-btn-warn" onClick={resetAll} disabled={translating}>
               기본값 초기화
             </button>
-            <button type="button" className="admin-btn admin-btn-primary" onClick={save}>
+            <button type="button" className="admin-btn admin-btn-primary" onClick={save} disabled={translating}>
               저장
+            </button>
+            <button
+              type="button"
+              className="admin-btn admin-btn-accent"
+              onClick={applyMultilingual}
+              disabled={translating}
+              title="한국어 페이지를 기준으로 다국어 페이지를 자동 반영합니다."
+            >
+              {translating ? "다국어 적용 중..." : "다국어 적용"}
             </button>
           </div>
         </header>
