@@ -122,17 +122,36 @@ export default function HomePage({ content, locale, locales, onLocaleChange }) {
             <p className="nl-section-desc">{content.updatesDesc}</p>
           </div>
           <ul className="nl-news">
-            {content.newsItems.map((item) => (
-              <li key={item.id}>
-                <article className="nl-news-item">
+            {content.newsItems.map((item) => {
+              const hasLink = typeof item.link === "string" && item.link.trim() !== "";
+              const isExternal = hasLink && /^https?:\/\//i.test(item.link.trim());
+              const inner = (
+                <>
                   <time dateTime={item.date}>{item.date}</time>
                   <div>
                     <h3 className="nl-news-title">{item.title}</h3>
                     <p className="nl-news-body">{item.detail}</p>
                   </div>
-                </article>
-              </li>
-            ))}
+                </>
+              );
+
+              return (
+                <li key={item.id}>
+                  {hasLink ? (
+                    <a
+                      className="nl-news-item nl-news-item--link"
+                      href={item.link.trim()}
+                      target={isExternal ? "_blank" : undefined}
+                      rel={isExternal ? "noopener noreferrer" : undefined}
+                    >
+                      {inner}
+                    </a>
+                  ) : (
+                    <article className="nl-news-item">{inner}</article>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
 

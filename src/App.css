@@ -362,6 +362,29 @@ body {
   border: 2px solid var(--nl-black);
 }
 
+a.nl-news-item--link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+
+a.nl-news-item--link:hover {
+  background: var(--nl-yellow);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--nl-black);
+}
+
+a.nl-news-item--link:focus-visible {
+  outline: 3px solid var(--nl-cyan);
+  outline-offset: 2px;
+}
+
+a.nl-news-item--link .nl-news-title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .nl-news-item time {
   font-family: "Space Mono", ui-monospace, monospace;
   font-size: 0.78rem;

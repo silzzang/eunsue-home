@@ -85,7 +85,7 @@ export default function AdminPage({ bundle, onSaved }) {
       ...d,
       newsItems: [
         ...d.newsItems,
-        { id: `n-${Date.now()}`, date: "", title: "", detail: "" },
+        { id: `n-${Date.now()}`, date: "", title: "", detail: "", link: "" },
       ],
     }));
   };
@@ -455,6 +455,16 @@ export default function AdminPage({ bundle, onSaved }) {
                   <label className="admin-label">
                     내용
                     <textarea className="admin-textarea" rows={2} value={row.detail} onChange={(e) => patchNews(i, "detail", e.target.value)} />
+                  </label>
+                  <label className="admin-label">
+                    링크 (선택, https://… 또는 #섹션)
+                    <input
+                      className="admin-input"
+                      type="url"
+                      placeholder="예: https://example.com  (비워두면 일반 텍스트)"
+                      value={row.link ?? ""}
+                      onChange={(e) => patchNews(i, "link", e.target.value)}
+                    />
                   </label>
                 </div>
               ))}
