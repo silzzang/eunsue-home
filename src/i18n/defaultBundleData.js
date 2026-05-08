@@ -1,4 +1,6 @@
 /** 기본 사이트 번들: 공통 이메일 + 언어별 세그먼트 (ko, en, zh, vi, ne) */
+export const BUNDLE_VERSION = 3;
+
 export const LOCALE_ORDER = ["ko", "en", "zh", "vi", "ne"];
 
 export const LOCALE_LABELS = {
@@ -110,29 +112,84 @@ function segment(lc) {
     highlightsAriaLabel: byLocale(lc, "하이라이트", "Highlights", "要点", "Nổi bật", "मुख्य बुँदाहरू"),
     inquiryAriaLabel: byLocale(lc, "문의 안내", "Inquiry", "咨询", "Liên hệ", "जिज्ञासा"),
     adminLinkLabel: byLocale(lc, "관리자", "Admin", "管理员", "Quản trị", "प्रशासक"),
-    researchLabel: byLocale(lc, "연구 관심", "Research interests", "研究方向", "Hướng nghiên cứu", "अनुसन्धान चासो"),
+    researchLabel: byLocale(lc, "전공전문영역", "Areas of expertise", "专业领域", "Lĩnh vực chuyên môn", "विशेषज्ञता क्षेत्र"),
     researchItems: byLocale(
       lc,
-      ["데이터 과학 및 응용", "인공지능·머신러닝 교육", "실무 연계 프로젝트 디자인"],
-      ["Data science and applications", "AI & machine learning education", "Practice-linked project design"],
-      ["数据科学及应用", "人工智能与机器学习教育", "与实践结合的项目设计"],
-      ["Khoa học dữ liệu và ứng dụng", "Giáo dục AI & machine learning", "Thiết kế dự án gắn thực tiễn"],
-      ["डाटा विज्ञान र अनुप्रयोग", "एआई र मेशिन लर्निङ शिक्षा", "व्यावहारिक परियोजना डिजाइन"]
+      [
+        "관광통역안내사(영어)-한국관광공사",
+        "국외여행인솔자-문체부/한국관광공사",
+        "한국어교원자격(2급)-문제부/국립국어원",
+        "SMU-TESOL국제영어교사자격-숙명여자대학교 교육대학원",
+        "서비스경영자격(관리자)-한국생산성본부",
+      ],
+      [
+        "Tourist Interpretation Guide (English) — Korea Tourism Organization",
+        "Outbound Tour Conductor — Ministry of Culture, Sports & Tourism / Korea Tourism Organization",
+        "Korean Language Teacher Certification (Level 2) — Ministry of Culture, Sports & Tourism / National Institute of Korean Language",
+        "SMU-TESOL International English Teacher Certification — Sookmyung Women's University Graduate School of Education",
+        "Service Management Certification (Manager) — Korea Productivity Center",
+      ],
+      [
+        "旅游口译导游（英语）— 韩国观光公社",
+        "国外旅行领队 — 文化体育观光部 / 韩国观光公社",
+        "韩国语教员资格证（2级）— 文化体育观光部 / 国立国语院",
+        "SMU-TESOL 国际英语教师资格 — 淑明女子大学教育研究生院",
+        "服务经营资格（管理者）— 韩国生产性本部",
+      ],
+      [
+        "Hướng dẫn viên du lịch phiên dịch (Tiếng Anh) — Tổng cục Du lịch Hàn Quốc",
+        "Trưởng đoàn tour quốc tế — Bộ Văn hóa, Thể thao và Du lịch / Tổng cục Du lịch Hàn Quốc",
+        "Chứng chỉ giáo viên tiếng Hàn (Cấp 2) — Bộ Văn hóa, Thể thao và Du lịch / Viện Quốc ngữ Hàn Quốc",
+        "Chứng chỉ giáo viên tiếng Anh quốc tế SMU-TESOL — Trường Sau đại học Sư phạm, Đại học Nữ Sookmyung",
+        "Chứng chỉ Quản lý Dịch vụ (cấp Quản lý) — Trung tâm Năng suất Hàn Quốc",
+      ],
+      [
+        "पर्यटन अनुवाद गाइड (अङ्ग्रेजी) — कोरिया पर्यटन सङ्गठन",
+        "अन्तर्राष्ट्रिय भ्रमण नेतृत्व — संस्कृति, खेलकुद र पर्यटन मन्त्रालय / कोरिया पर्यटन सङ्गठन",
+        "कोरियन भाषा शिक्षक प्रमाणपत्र (स्तर २) — संस्कृति, खेलकुद र पर्यटन मन्त्रालय / राष्ट्रिय कोरियन भाषा संस्थान",
+        "SMU-TESOL अन्तर्राष्ट्रिय अङ्ग्रेजी शिक्षक प्रमाणपत्र — सुक्म्योङ महिला विश्वविद्यालय शिक्षा स्नातकोत्तर विद्यालय",
+        "सेवा व्यवस्थापन प्रमाणपत्र (प्रबन्धक) — कोरिया उत्पादकत्व केन्द्र",
+      ]
     ),
     researchNote: byLocale(lc, "세부는 논문·프로젝트 페이지에서 정리 예정입니다.", "Details will appear on publications and project pages.", "详细内容将陆续在论文与项目页面整理。", "Chi tiết sẽ được cập nhật trên ấn phẩm và trang dự án.", "विस्तृत जानकारी प्रकाशन र परियोजना पृष्ठहरूमा आउनेछ।"),
     coursesLabel: byLocale(lc, "담당 강좌", "Courses", "主讲课程", "Môn phụ trách", "पढाइएका पाठ्यक्रमहरू"),
     courseItems: byLocale(
       lc,
-      ["데이터 분석 기초 (학부)", "머신러닝 특론 (대학원)"],
-      ["Introduction to data analysis (UG)", "Topics in machine learning (grad)"],
-      ["数据分析基础（本科）", "机器学习专题（研究生）"],
-      ["Phân tích dữ liệu (đại học)", "Machine learning nâng cao (sau đại học)"],
-      ["डाटा विश्लेषण परिचय (स्नातक)", "मेशिन लर्निङ विषयक (परास्नातक)"]
+      [
+        "관광실무영어(학부)",
+        "항공객실서비스(학부)",
+        "호텔리조트서비스(학부)",
+        "축제이벤트연구(대학원)",
+      ],
+      [
+        "Practical Tourism English (UG)",
+        "Airline cabin services (UG)",
+        "Hotel & resort services (UG)",
+        "Festival & event studies (Grad)",
+      ],
+      [
+        "旅游实务英语（本科）",
+        "航空客舱服务（本科）",
+        "酒店与度假村服务（本科）",
+        "节庆与活动研究（研究生）",
+      ],
+      [
+        "Tiếng Anh thực hành du lịch (đại học)",
+        "Dịch vụ khoang hành khách hàng không (đại học)",
+        "Dịch vụ khách sạn & resort (đại học)",
+        "Nghiên cứu lễ hội & sự kiện (sau đại học)",
+      ],
+      [
+        "व्यावहारिक पर्यटन अङ्ग्रेजी (स्नातक)",
+        "हवाई केबिन सेवा (स्नातक)",
+        "होटल तथा रिसोर्ट सेवा (स्नातक)",
+        "उत्सव तथा कार्यक्रम अध्ययन (स्नातकोत्तर)",
+      ]
     ),
     coursesNote: byLocale(lc, "학기별 변경 시 포털 안내를 함께 확인해 주세요.", "Check the portal for changes each term.", "学期如有调整请以门户网站通知为准。", "Mỗi học kỳ có thể thay đổi—theo cổng thông tin.", "प्रत्येक सेमेस्टर पोर्टल सूचनाहरू जाँच गर्नुहोला।"),
     contactLabel: byLocale(lc, "학생 면담 · 연락", "Student hours · Contact", "学生面谈 · 联系", "Tư vấn · Liên hệ", "विद्यार्थी परामर्श · सम्पर्क"),
     contactHours: byLocale(lc, "금요일 14:00–16:00 (사전 예약)", "Friday 14:00–16:00 (by appointment)", "周五 14:00–16:00（请预约）", "Thứ Sáu 14:00–16:00 (hẹn trước)", "शुक्रबार १४:००–१६:०० (पूर्व नियुक्ति)"),
-    contactOffice: byLocale(lc, "연구실: 성지관 403호", "Office: Seongji Hall 403", "办公室：圣志馆403号", "Văn phòng: Seongji 403", "कार्यालय: सŏन्गजि हल ४०३"),
+    contactOffice: byLocale(lc, "연구실: 성지관 C3-410-1호", "Office: Seongji Hall C3-410-1", "研究室：圣志馆 C3-410-1 号", "Phòng nghiên cứu: Tòa Seongji C3-410-1", "अनुसन्धान कक्ष: सेओङजी हल C3-410-1"),
     updatesKicker: byLocale(lc, "LATEST UPDATES", "LATEST UPDATES", "最新动态", "CẬP NHẪT", "पछिल्लो अपडेट"),
     updatesDesc: byLocale(lc, "학생·방문자를 위한 공지와 안내입니다.", "Announcements for students and visitors.", "为学生与来访者提供的公告。", "Thông báo cho sinh viên và khách.", "विद्यार्थी र आगन्तुकका लाई सूचनाहरू।"),
     newsItems: [news1[lc], news2[lc]],
@@ -156,7 +213,7 @@ export function buildDefaultBundle() {
     locales[lc] = segment(lc);
   }
   return {
-    version: 2,
+    version: BUNDLE_VERSION,
     email: "eunsueyou@gmail.com",
     locales,
   };

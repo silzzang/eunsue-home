@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { buildDefaultBundle, LOCALE_LABELS, LOCALE_ORDER } from "./i18n/defaultBundleData.js";
+import {
+  BUNDLE_VERSION,
+  buildDefaultBundle,
+  LOCALE_LABELS,
+  LOCALE_ORDER,
+} from "./i18n/defaultBundleData.js";
 import { clearStoredContent, persistContentBundle } from "./contentStorage.js";
 
 const AUTH_KEY = "prof-admin-auth";
@@ -111,7 +116,7 @@ export default function AdminPage({ bundle, onSaved }) {
   const save = () => {
     const seg = flushSegment();
     const next = {
-      version: 2,
+      version: BUNDLE_VERSION,
       email: emailDraft.trim() || localBundle.email,
       locales: {
         ...localBundle.locales,
