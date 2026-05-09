@@ -27,6 +27,111 @@ function itemsToLines(items) {
   return Array.isArray(items) ? items.join("\n") : "";
 }
 
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isValidNewsLink(link) {
+  if (!link) return true;
+  const trimmed = link.trim();
+  if (!trimmed) return true;
+  return /^https?:\/\//i.test(trimmed) || trimmed.startsWith("#");
+}
+
+function validateSegment(segment, locale) {
+  const requiredTextFields = [
+    "brandTitle",
+    "brandTag",
+    "navHome",
+    "navResearch",
+    "navCourses",
+    "navUpdates",
+    "heroEyebrow",
+    "heroTitle",
+    "heroLead",
+    "researchLabel",
+    "researchNote",
+    "coursesLabel",
+    "coursesNote",
+    "contactLabel",
+    "contactHours",
+    "contactOffice",
+    "updatesKicker",
+    "updatesDesc",
+    "ctaTitle",
+    "ctaDesc",
+    "ctaButton",
+    "collaborationSubject",
+    "adminLinkLabel",
+  ];
+
+  const errors = [];
+
+  for (const key of requiredTextFields) {
+    const value = segment[key];
+    if (typeof value !== "string" || value.trim() === "") {
+      errors.push(`[${locale}] ${key} 값이 비어 있습니다.`);
+    }
+  }
+
+  if (!Array.isArray(segment.researchItems) || segment.researchItems.length === 0) {
+    errors.push(`[${locale}] researchItems는 1개 이상 필요합니다.`);
+  } else if (segment.researchItems.some((item) => typeof item !== "string" || item.trim() === "")) {
+    errors.push(`[${locale}] researchItems에 빈 항목이 있습니다.`);
+  }
+
+  if (!Array.isArray(segment.courseItems) || segment.courseItems.length === 0) {
+    errors.push(`[${locale}] courseItems는 1개 이상 필요합니다.`);
+  } else if (segment.courseItems.some((item) => typeof item !== "string" || item.trim() === "")) {
+    errors.push(`[${locale}] courseItems에 빈 항목이 있습니다.`);
+  }
+
+  if (!Array.isArray(segment.newsItems) || segment.newsItems.length === 0) {
+    errors.push(`[${locale}] newsItems는 1개 이상 필요합니다.`);
+  } else {
+    const ids = new Set();
+    segment.newsItems.forEach((item, idx) => {
+      if (!item || typeof item !== "object") {
+        errors.push(`[${locale}] newsItems[${idx}] 형식이 잘못되었습니다.`);
+        return;
+      }
+      if (typeof item.id !== "string" || item.id.trim() === "") {
+        errors.push(`[${locale}] newsItems[${idx}].id 값이 비어 있습니다.`);
+      } else if (ids.has(item.id)) {
+        errors.push(`[${locale}] newsItems.id 중복: ${item.id}`);
+      } else {
+        ids.add(item.id);
+      }
+      if (typeof item.date !== "string" || item.date.trim() === "") {
+        errors.push(`[${locale}] newsItems[${idx}].date 값이 비어 있습니다.`);
+      }
+      if (typeof item.title !== "string" || item.title.trim() === "") {
+        errors.push(`[${locale}] newsItems[${idx}].title 값이 비어 있습니다.`);
+      }
+      if (typeof item.detail !== "string" || item.detail.trim() === "") {
+        errors.push(`[${locale}] newsItems[${idx}].detail 값이 비어 있습니다.`);
+      }
+      if (!isValidNewsLink(item.link ?? "")) {
+        errors.push(`[${locale}] newsItems[${idx}].link 형식이 올바르지 않습니다. (https://... 또는 #섹션)`);
+      }
+    });
+  }
+
+  return errors;
+}
+
+function validateBundleForSave(nextBundle) {
+  // 요청사항: 텍스트 값은 최대한 자유롭게 저장/조회 허용
+  // 구조가 무너져 직렬화가 불가능한 경우만 차단합니다.
+  if (!nextBundle || typeof nextBundle !== "object") {
+    return ["저장 데이터 형식이 잘못되었습니다."];
+  }
+  if (!nextBundle.locales || typeof nextBundle.locales !== "object") {
+    return ["저장 데이터에 locales가 없습니다."];
+  }
+  return [];
+}
+
 export default function AdminPage({ bundle, onSaved }) {
   const [authed, setAuthed] = useState(() => sessionStorage.getItem(AUTH_KEY) === "1");
   const [passInput, setPassInput] = useState("");
@@ -125,6 +230,13 @@ export default function AdminPage({ bundle, onSaved }) {
         [activeLocale]: seg,
       },
     };
+    const validationErrors = validateBundleForSave(next);
+    if (validationErrors.length > 0) {
+      const preview = validationErrors.slice(0, 3).join(" / ");
+      setMsg(`저장 중단: ${preview}${validationErrors.length > 3 ? " ..." : ""}`);
+      setTimeout(() => setMsg(""), 6000);
+      return;
+    }
 
     try {
       await persistContentBundle(next);
@@ -183,6 +295,12 @@ export default function AdminPage({ bundle, onSaved }) {
         email: emailDraft.trim() || localBundle.email,
         locales: nextLocales,
       };
+      const validationErrors = validateBundleForSave(next);
+      if (validationErrors.length > 0) {
+        const preview = validationErrors.slice(0, 3).join(" / ");
+        showMessage(`다국어 저장 중단: ${preview}${validationErrors.length > 3 ? " ..." : ""}`, 6000);
+        return;
+      }
 
       await persistContentBundle(next);
       onSaved(next);
