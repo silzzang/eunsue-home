@@ -115,7 +115,7 @@ export default function AdminPage({ bundle, onSaved }) {
     setActiveLocale(next);
   };
 
-  const save = () => {
+  const save = async () => {
     const seg = flushSegment();
     const next = {
       version: BUNDLE_VERSION,
@@ -125,11 +125,18 @@ export default function AdminPage({ bundle, onSaved }) {
         [activeLocale]: seg,
       },
     };
-    persistContentBundle(next);
-    onSaved(next);
-    setLocalBundle(structuredClone(next));
-    setMsg("저장되었습니다. 메인 페이지로 이동해 확인하세요.");
-    setTimeout(() => setMsg(""), 4000);
+
+    try {
+      await persistContentBundle(next);
+      onSaved(next);
+      setLocalBundle(structuredClone(next));
+      setMsg("저장되었습니다. 모든 사용자가 같은 내용을 보게 됩니다.");
+      setTimeout(() => setMsg(""), 4000);
+    } catch (err) {
+      console.error(err);
+      setMsg(`저장 실패: ${err?.message || err}`);
+      setTimeout(() => setMsg(""), 5000);
+    }
   };
 
   const showMessage = (text, timeout = 4000) => {
@@ -177,7 +184,7 @@ export default function AdminPage({ bundle, onSaved }) {
         locales: nextLocales,
       };
 
-      persistContentBundle(next);
+      await persistContentBundle(next);
       onSaved(next);
       setLocalBundle(structuredClone(next));
 
@@ -188,7 +195,7 @@ export default function AdminPage({ bundle, onSaved }) {
         setCoursesText(itemsToLines(activeSegment.courseItems));
       }
 
-      showMessage("다국어 적용이 완료되어 저장되었습니다. 메인 페이지에서 확인하세요.");
+      showMessage("다국어 적용이 완료되어 DB에 저장되었습니다.");
     } catch (err) {
       console.error(err);
       showMessage(`다국어 적용 실패: ${err?.message || err}`);
@@ -197,16 +204,22 @@ export default function AdminPage({ bundle, onSaved }) {
     }
   };
 
-  const resetAll = () => {
+  const resetAll = async () => {
     if (!window.confirm("저장된 내용을 지우고 기본값으로 되돌릴까요?")) return;
-    clearStoredContent();
-    const fresh = structuredClone(buildDefaultBundle());
-    onSaved(fresh);
-    setLocalBundle(fresh);
-    setEmailDraft(fresh.email);
-    setActiveLocale("ko");
-    setMsg("기본값으로 초기화했습니다.");
-    setTimeout(() => setMsg(""), 4000);
+    try {
+      await clearStoredContent();
+      const fresh = structuredClone(buildDefaultBundle());
+      onSaved(fresh);
+      setLocalBundle(fresh);
+      setEmailDraft(fresh.email);
+      setActiveLocale("ko");
+      setMsg("기본값으로 초기화했습니다.");
+      setTimeout(() => setMsg(""), 4000);
+    } catch (err) {
+      console.error(err);
+      setMsg(`초기화 실패: ${err?.message || err}`);
+      setTimeout(() => setMsg(""), 5000);
+    }
   };
 
   if (!authed) {

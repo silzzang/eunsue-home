@@ -15,7 +15,7 @@ function routeFromHash() {
 
 export default function App() {
   const [route, setRoute] = useState(routeFromHash);
-  const [bundle, setBundle] = useState(() => loadContentBundle());
+  const [bundle, setBundle] = useState(null);
   const [locale, setLocale] = useState(() => {
     const saved = localStorage.getItem(LANG_KEY);
     return LOCALE_ORDER.includes(saved) ? saved : "ko";
@@ -28,6 +28,16 @@ export default function App() {
   }, [locale]);
 
   useEffect(() => {
+    let alive = true;
+    loadContentBundle().then((loaded) => {
+      if (alive) setBundle(loaded);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
     const onHash = () => setRoute(routeFromHash());
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
@@ -36,6 +46,8 @@ export default function App() {
   const onSavedBundle = useCallback((next) => {
     setBundle(next);
   }, []);
+
+  if (!bundle) return null;
 
   const pageContent = getPageContent(bundle, locale);
 
